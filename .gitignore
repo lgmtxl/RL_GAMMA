@@ -33,3 +33,4 @@ testCode/
 DataSet/*
 !DataSet/__init__.py
 
+buffer_data/
