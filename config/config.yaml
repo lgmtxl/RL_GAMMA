@@ -1,0 +1,33 @@
+train:
+  lr: 2e-3
+  num_steps: 5
+  num_episodes: 10
+  partition: 10
+  gamma: 0.98
+  epsilon: 0.55
+  target_update: 10
+  batch_size : 3
+
+  action_space_range_left: 0
+  action_space_range_right: 2
+  action_space_partition_num: 11
+
+env:
+  name: ImgEnv
+
+DataSet:
+  DataSetDir: ./DataSet/
+  DataPath: ./DataSet/test1.jpg
+
+algorithm:
+  name: DQN
+
+model:
+  name: QNet
+  hidden_dim: 128
+
+
+ReplayBuffer:
+  name: ReplayBuffer
+  buffer_size: 1000
+  minimal_size: 3
