@@ -1,22 +1,18 @@
 import numpy as np
 import torch
 import torch.nn.functional as F
-
-from model.QNet import Qnet
 from utils import rl_utils
 
 
 class DQN:
     ''' DQN算法 '''
 
-    def __init__(self, hidden_dim, action_dim, learning_rate, gamma,
-                 epsilon, target_update, device):
+    def __init__(self,  action_dim, learning_rate, gamma,
+                 epsilon, target_update, device, nets):
         self.action_dim = action_dim
-        self.q_net = Qnet(hidden_dim,
-                          self.action_dim).to(device)  # Q网络
+        self.q_net = nets[0].to(device)  # Q网络
         # 目标网络
-        self.target_q_net = Qnet(hidden_dim,
-                                 self.action_dim).to(device)
+        self.target_q_net = nets[1].to(device)
         # 使用Adam优化器
         self.optimizer = torch.optim.Adam(self.q_net.parameters(),
                                           lr=learning_rate)
@@ -67,3 +63,4 @@ class DQN:
             self.target_q_net.load_state_dict(
                 self.q_net.state_dict())  # 更新目标网络
         self.count += 1
+        return dqn_loss.detach().cpu().item()

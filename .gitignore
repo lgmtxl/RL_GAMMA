@@ -34,3 +34,9 @@ DataSet/*
 !DataSet/__init__.py
 
 buffer_data/
+
+exp_results/
+
+runs/
+
+log/
