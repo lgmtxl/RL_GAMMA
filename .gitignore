@@ -30,3 +30,6 @@ exp_imgs/
 #忽略测试代码
 testCode/
 
+DataSet/*
+!DataSet/__init__.py
+
