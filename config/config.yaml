@@ -16,6 +16,10 @@ train:
   exp_results_path: /root/autodl-tmp//runs/
   exp_imgs: /root/autodl-tmp/exp_imgs/
 
+evalueate:
+  pth_path: ./pth/q_net.pth
+  test_data_dir_path: ./DataSet/
+
 env:
   name: ImgEnv
 

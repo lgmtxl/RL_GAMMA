@@ -32,6 +32,7 @@ testCode/
 
 DataSet/*
 !DataSet/__init__.py
+!DataSet/test*
 
 buffer_data/
 
