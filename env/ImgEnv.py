@@ -9,8 +9,12 @@ class ImgEnv:
 
     def step(self, action):
         reward = self.compute_reward()
+        done = False
+        if(reward < 3):
+            reward = -10
+            done = True
         self.imgState = self.adjust_gamma(self.action_list[action])
-        return self.imgState, reward, False
+        return self.imgState, reward, done
 
     def reset(self):
         self.imgState = self.ori_img
