@@ -2,6 +2,8 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 from utils import rl_utils
+from torch.cuda.amp import GradScaler, autocast
+
 
 
 class DQN:
@@ -21,6 +23,7 @@ class DQN:
         self.target_update = target_update  # 目标网络更新频率
         self.count = 0  # 计数器,记录更新次数
         self.device = device
+        self.scaler = GradScaler()
 
     def setEpsilon(self, epsilon):
         self.epsilon = epsilon
@@ -46,21 +49,27 @@ class DQN:
         # next_states = transition_dict['next_states'].to(self.device)
         dones = torch.tensor(transition_dict['dones'],
                              dtype=torch.float).view(-1, 1).to(self.device)
+        with autocast():
+            q_values = self.q_net(states).gather(1, actions)  # Q值
+            # 下个状态的最大Q值
+            max_next_q_values = self.target_q_net(next_states).max(1)[0].view(
+                -1, 1)
+            q_targets = rewards + self.gamma * max_next_q_values * (1 - dones
+                                                                    )  # TD误差目标
+            dqn_loss = torch.mean(F.mse_loss(q_values, q_targets))  # 均方误差损失函数
 
-        q_values = self.q_net(states).gather(1, actions)  # Q值
-        # 下个状态的最大Q值
-        max_next_q_values = self.target_q_net(next_states).max(1)[0].view(
-            -1, 1)
-        q_targets = rewards + self.gamma * max_next_q_values * (1 - dones
-                                                                )  # TD误差目标
-        dqn_loss = torch.mean(F.mse_loss(q_values, q_targets))  # 均方误差损失函数
+        self.optimizer.zero_grad()
+        self.scaler.scale(dqn_loss).backward()
+        self.scaler.step(self.optimizer)
+        self.scaler.update()
         # print(f'loss: {dqn_loss}')
-        self.optimizer.zero_grad()  # PyTorch中默认梯度会累积,这里需要显式将梯度置为0
-        dqn_loss.backward()  # 反向传播更新参数
-        self.optimizer.step()
+        # self.optimizer.zero_grad()  # PyTorch中默认梯度会累积,这里需要显式将梯度置为0
+        # dqn_loss.backward()  # 反向传播更新参数
+        # self.optimizer.step()
 
         if self.count % self.target_update == 0:
             self.target_q_net.load_state_dict(
                 self.q_net.state_dict())  # 更新目标网络
         self.count += 1
-        return dqn_loss.detach().cpu().item()
+        loss_item = dqn_loss.item()
+        return loss_item

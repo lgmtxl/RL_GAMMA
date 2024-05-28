@@ -122,12 +122,12 @@ def train(config):
     for i in range(partition):
         train_logger.info(f'{"="*20}Iteration {i} {"="*20}')
         with tqdm(total=int(num_episodes / partition), desc='Iteration %d' % i) as pbar:
-            # if(i >= 3):
-            #     agent.setEpsilon(0.45)
-            # if(i >= 6):
-            #     agent.setEpsilon(0.3)
-            # if(i >= 8):
-            #     agent.setEpsilon(0.1)
+            if(i >= 2):
+                agent.setEpsilon(0.45)
+            if(i >= 4):
+                agent.setEpsilon(0.3)
+            if(i >= 7):
+                agent.setEpsilon(0.1)
             for i_episode in range(int(num_episodes / partition)):
                 train_logger.info(f'{"=" * 10}i_episode {i_episode} {"=" * 10}')
                 episode_return = 0

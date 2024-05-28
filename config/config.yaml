@@ -1,10 +1,10 @@
 train:
   lr: 2e-3
   num_steps: 20
-  num_episodes: 500
+  num_episodes: 1000
   partition: 10
   gamma: 0.98
-  epsilon: 0.05
+  epsilon: 0.5
   target_update: 10
   batch_size : 8
 
@@ -12,8 +12,8 @@ train:
   action_space_range_right: 2
   action_space_partition_num: 11
 
-  exp_log_path: /root/autodl-tmp//log/
-  exp_results_path: /root/autodl-tmp//runs/
+  exp_log_path: /root/autodl-tmp/log/
+  exp_results_path: /root/autodl-tmp/runs/
   exp_imgs: /root/autodl-tmp/exp_imgs/
 
 evalueate:

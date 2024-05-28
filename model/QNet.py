@@ -7,8 +7,7 @@ class Qnet(torch.nn.Module):
     ''' determinstic '''
     def __init__(self, hidden_dim, action_dim):
         super(Qnet, self).__init__()
-        # self.conv1 = torch.nn.Conv2d(state_dim, hidden_dim,3,2,1)
-        self.resNet = models.resnet50(pretrained=False)
+        self.resNet = models.resnet18(pretrained=False)
         num_ftrs = self.resNet.fc.in_features
         self.resNet.fc = torch.nn.Linear(num_ftrs, hidden_dim)
         for param in self.resNet.parameters():
