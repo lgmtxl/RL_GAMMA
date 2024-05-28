@@ -135,7 +135,7 @@ def train(config):
                 state = env.reset()
                 done = False
                 step_num = 0
-                while not done or step_num < num_steps:
+                while not done and step_num < num_steps:
                     state_tensor = rl_utils.mat2tensor(state)
                     action = agent.take_action(state_tensor)
                     next_state, reward, done = env.step(action)
