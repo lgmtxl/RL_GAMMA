@@ -8,9 +8,8 @@ class ImgEnv:
         self.action_list = action_list
 
     def step(self, action):
-        # print(action_list[action])
-        self.imgState = self.adjust_gamma(self.action_list[action])
         reward = self.compute_reward()
+        self.imgState = self.adjust_gamma(self.action_list[action])
         return self.imgState, reward, False
 
     def reset(self):

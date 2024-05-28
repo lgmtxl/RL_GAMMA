@@ -4,16 +4,17 @@ train:
   num_episodes: 500
   partition: 10
   gamma: 0.98
-  epsilon: 0.55
+  epsilon: 0.05
   target_update: 10
-  batch_size : 3
+  batch_size : 8
 
   action_space_range_left: 0
   action_space_range_right: 2
   action_space_partition_num: 11
 
-  exp_log_path: ./log/
-  exp_results_path: ./runs/
+  exp_log_path: /root/autodl-tmp//log/
+  exp_results_path: /root/autodl-tmp//runs/
+  exp_imgs: /root/autodl-tmp/exp_imgs/
 
 env:
   name: ImgEnv
@@ -33,4 +34,4 @@ model:
 ReplayBuffer:
   name: ReplayBuffer
   buffer_size: 500
-  minimal_size: 3
+  minimal_size: 8

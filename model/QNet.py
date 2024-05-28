@@ -8,17 +8,17 @@ class Qnet(torch.nn.Module):
     def __init__(self, hidden_dim, action_dim):
         super(Qnet, self).__init__()
         # self.conv1 = torch.nn.Conv2d(state_dim, hidden_dim,3,2,1)
-        self.resNet = models.resnet50(pretrained=False)
+        self.resNet = models.resnet50(pretrained=True)
         num_ftrs = self.resNet.fc.in_features
         self.resNet.fc = torch.nn.Linear(num_ftrs, hidden_dim)
         for param in self.resNet.parameters():
+            param.requires_grad = False
+        for param in self.resNet.layer4.parameters():
             param.requires_grad = True
-        # for param in self.resNet.layer4.parameters():
-        #     param.requires_grad = True
-        # self.resNet.fc.requires_grad = True
+        self.resNet.fc.requires_grad = True
         self.relu1 = torch.nn.ReLU()
         self.fc1 = torch.nn.Linear(hidden_dim, action_dim)
-        self._initialize_weights()
+        # self._initialize_weights()
     def _initialize_weights(self):
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
@@ -34,7 +34,7 @@ class Qnet(torch.nn.Module):
 
     def forward(self, x):
         x = self.relu1(self.resNet(x))
-        print(f'x.shape: {x.shape}')
+        # print(f'x.shape: {x.shape}')
         x = self.fc1(x)
-        print(f'x.shape: {x.shape}')
+        # print(f'x.shape: {x.shape}')
         return x

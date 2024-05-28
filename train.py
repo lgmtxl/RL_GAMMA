@@ -57,6 +57,7 @@ def train(config):
     action_space_partition_num = config['train']['action_space_partition_num']
     exp_results_path = config['train']['exp_results_path']
     exp_log_path = config['train']['exp_log_path']
+    exp_imgs = config['train']['exp_imgs']
     #data parameters
     dataSetDir = config['DataSet']['DataSetDir']
     dataPath = config['DataSet']['DataPath']
@@ -121,12 +122,12 @@ def train(config):
     for i in range(partition):
         train_logger.info(f'{"="*20}Iteration {i} {"="*20}')
         with tqdm(total=int(num_episodes / partition), desc='Iteration %d' % i) as pbar:
-            if(i >= 3):
-                agent.setEpsilon(0.45)
-            if(i >= 6):
-                agent.setEpsilon(0.3)
-            if(i >= 8):
-                agent.setEpsilon(0.1)
+            # if(i >= 3):
+            #     agent.setEpsilon(0.45)
+            # if(i >= 6):
+            #     agent.setEpsilon(0.3)
+            # if(i >= 8):
+            #     agent.setEpsilon(0.1)
             for i_episode in range(int(num_episodes / partition)):
                 train_logger.info(f'{"=" * 10}i_episode {i_episode} {"=" * 10}')
                 episode_return = 0
@@ -138,10 +139,11 @@ def train(config):
                     state_tensor = rl_utils.mat2tensor(state)
                     action = agent.take_action(state_tensor)
                     next_state, reward, done = env.step(action)
-                    dir_path = f'./exp_imgs/{time_str}/iter_{i}/episode{i_episode}/'
+                    dir_path = f'{exp_imgs}/{time_str}/iter_{i}/episode{i_episode}/'
                     if not os.path.exists(dir_path):
                         os.makedirs(dir_path)
-                    cv2.imwrite(f'{dir_path}img_step{step_num}.jpg', next_state)
+                    if step_num==0 or (step_num + 1)%5==0:
+                        cv2.imwrite(f'{dir_path}img_step{step_num}.jpg', next_state)
                     replay_buffer.add(state, action, reward, next_state, done)
                     state = next_state
                     episode_return += reward
