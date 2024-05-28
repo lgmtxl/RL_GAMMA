@@ -11,7 +11,7 @@ class ImgEnv:
         reward = self.compute_reward()
         done = False
         if(reward < 3):
-            reward = -10
+            reward = -20
             done = True
         self.imgState = self.adjust_gamma(self.action_list[action])
         return self.imgState, reward, done
