@@ -6,8 +6,8 @@ from torch.cuda.amp import GradScaler, autocast
 
 
 
-class DQN:
-    ''' DQN算法 '''
+class DoubleDQN:
+    ''' DoubleDQN算法 解决过高估计 '''
 
     def __init__(self,  action_dim, learning_rate, gamma,
                  epsilon, target_update, device, nets):
@@ -52,11 +52,10 @@ class DQN:
         with autocast():
             q_values = self.q_net(states).gather(1, actions)  # Q值
             # 下个状态的最大Q值
-            max_next_q_values = self.target_q_net(next_states).max(1)[0].view(
-                -1, 1)
+            max_action = self.q_net(next_states).max(1)[1].view(-1, 1)
+            max_next_q_values = self.target_q_net(next_states).gather(1, max_action)
             q_targets = rewards + self.gamma * max_next_q_values * (1 - dones
                                                                     )  # TD误差目标
-            print(f'q_targets: {q_targets}')
             dqn_loss = torch.mean(F.mse_loss(q_values, q_targets))  # 均方误差损失函数
 
         self.optimizer.zero_grad()
@@ -73,4 +72,4 @@ class DQN:
                 self.q_net.state_dict())  # 更新目标网络
         self.count += 1
         loss_item = dqn_loss.item()
-        return loss_item
+        return loss_item, torch.mean(q_values).item(), torch.mean(q_targets).item()

@@ -10,6 +10,7 @@ from tqdm import tqdm
 import random
 
 from algorithms.DQN import DQN
+from algorithms.DoubleDQN import DoubleDQN
 from env.ImgEnv import ImgEnv
 from model.QNet import Qnet
 from utils import rl_utils as rl_utils
@@ -88,7 +89,10 @@ def train(config):
         os.makedirs(exp_results_path+time_str+"/")
     summary_writer_path = f'{exp_results_path}{time_str}/exp_run_log'
     summary_writer = SummaryWriter(summary_writer_path)
-    tags = ['reward_time_steps', 'reward_episode', 'loss_time_steps', 'loss_episode']
+    tags = ['reward_time_steps', 'reward_episode',
+            'loss_time_steps', 'loss_episode'
+            'q_value_time_steps', 'q_value_episode',
+            'q_target_time_steps', 'q_target_episode', ]
 
 
     # 设置设备
@@ -115,6 +119,9 @@ def train(config):
 
     if algorithm_name == 'DQN':
         agent = DQN(action_dim, lr, gamma, epsilon, target_update, device, nets)
+    elif algorithm_name == 'DoubleDQN':
+        agent = DoubleDQN(action_dim, lr, gamma, epsilon, target_update, device, nets)
+
     if buffer_name == 'ReplayBuffer':
         replay_buffer = ReplayBuffer(buffer_size)
 
@@ -132,6 +139,8 @@ def train(config):
                 train_logger.info(f'{"=" * 10}i_episode {i_episode} {"=" * 10}')
                 episode_return = 0
                 dqn_loss_sum = 0
+                q_value_sum = 0
+                q_target_sum = 0
                 state = env.reset()
                 done = False
                 step_num = 0
@@ -160,13 +169,21 @@ def train(config):
                             'rewards': b_r,
                             'dones': b_d
                         }
-                        dqn_loss = agent.update(transition_dict)
+                        dqn_loss,q_value,q_target = agent.update(transition_dict)
                         dqn_loss_sum += dqn_loss
+                        q_value_sum += q_value
+                        q_target_sum += q_target
                         summary_writer.add_scalar(tags[2], dqn_loss, (i*(num_episodes / partition)+i_episode)*num_steps+step_num)
+                        summary_writer.add_scalar(tags[4], q_value, (i*(num_episodes / partition)+i_episode)*num_steps+step_num)
+                        summary_writer.add_scalar(tags[6], q_target, (i*(num_episodes / partition)+i_episode)*num_steps+step_num)
+
                     step_num+=1
                 return_list.append(episode_return)
                 summary_writer.add_scalar(tags[1],episode_return,i*(num_episodes / partition)+i_episode)
                 summary_writer.add_scalar(tags[3],dqn_loss_sum/(step_num+1),i*(num_episodes / partition)+i_episode)
+                summary_writer.add_scalar(tags[5],q_value_sum/(step_num+1),i*(num_episodes / partition)+i_episode)
+                summary_writer.add_scalar(tags[7],q_target_sum/(step_num+1),i*(num_episodes / partition)+i_episode)
+
                 # summary_writer.add_histogram(tag="last_fc",
                 #                              values=agent.q_net.fc1.weight,
                 #                              global_step=i*(num_episodes / partition)+i_episode)

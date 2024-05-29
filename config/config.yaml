@@ -28,7 +28,7 @@ DataSet:
   DataPath: ./DataSet/test1.jpg
 
 algorithm:
-  name: DQN
+  name: DoubleDQN
 
 model:
   name: QNet
