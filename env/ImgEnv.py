@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+import utils.util as util
 
 class ImgEnv:
     def __init__(self, imgPath: str, action_list: np.array) -> None:
@@ -10,9 +11,10 @@ class ImgEnv:
     def step(self, action):
         reward = self.compute_reward()
         done = False
-        if(reward < 3):
+        if(reward <= 5):
             reward = -20
             done = True
+        reward = util.scale_to_0_1(reward,max_val=20,min_val=-20)
         self.imgState = self.adjust_gamma(self.action_list[action])
         return self.imgState, reward, done
 

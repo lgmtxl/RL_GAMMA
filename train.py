@@ -166,10 +166,10 @@ def train(config):
                     step_num+=1
                 return_list.append(episode_return)
                 summary_writer.add_scalar(tags[1],episode_return,i*(num_episodes / partition)+i_episode)
-                summary_writer.add_scalar(tags[3],dqn_loss_sum/num_steps,i*(num_episodes / partition)+i_episode)
-                summary_writer.add_histogram(tag="last_fc",
-                                             values=agent.q_net.fc1.weight,
-                                             global_step=i*(num_episodes / partition)+i_episode)
+                summary_writer.add_scalar(tags[3],dqn_loss_sum/(step_num+1),i*(num_episodes / partition)+i_episode)
+                # summary_writer.add_histogram(tag="last_fc",
+                #                              values=agent.q_net.fc1.weight,
+                #                              global_step=i*(num_episodes / partition)+i_episode)
                 if (i_episode + 1) % 5 == 0:
                     pbar.set_postfix({
                         'episode':
