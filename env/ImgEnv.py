@@ -10,12 +10,8 @@ class ImgEnv:
 
     def step(self, action):
         reward = self.compute_reward()
-        reward = util.scale_to_0_1(reward,0,17)
         done = False
-        if(reward <= 5):
-            reward = -100
-            done = True
-        # reward = util.scale_value_to_minus1_to_1(reward,max_val=20,min_val=-20)
+        reward = util.scale_value_to_minus1_to_1(reward, 0, 17)
         self.imgState = self.adjust_gamma(self.action_list[action])
         return self.imgState, reward, done
 

@@ -90,9 +90,9 @@ def train(config):
     summary_writer_path = f'{exp_results_path}{time_str}/exp_run_log'
     summary_writer = SummaryWriter(summary_writer_path)
     tags = ['reward_time_steps', 'reward_episode',
-            'loss_time_steps', 'loss_episode'
+            'loss_time_steps', 'loss_episode',
             'q_value_time_steps', 'q_value_episode',
-            'q_target_time_steps', 'q_target_episode', ]
+            'q_target_time_steps', 'q_target_episode']
 
 
     # 设置设备
@@ -134,7 +134,7 @@ def train(config):
             if(i >= 4):
                 agent.setEpsilon(0.3)
             if(i >= 7):
-                agent.setEpsilon(0.1)
+                agent.setEpsilon(0.05)
             for i_episode in range(int(num_episodes / partition)):
                 train_logger.info(f'{"=" * 10}i_episode {i_episode} {"=" * 10}')
                 episode_return = 0

@@ -17,7 +17,7 @@ class Qnet(torch.nn.Module):
         self.resNet.fc.requires_grad = True
         self.relu1 = torch.nn.ReLU()
         self.fc1 = torch.nn.Linear(hidden_dim, action_dim)
-        # self._initialize_weights()
+        self._initialize_weights()
     def _initialize_weights(self):
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
